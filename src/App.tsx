@@ -1,6 +1,7 @@
 import React, { ReactNode } from 'react';
 import { OnChar, WindupChildren } from 'windups';
 import './App.css';
+import { BgmPlayer, sfx, SfxTracks, Sprites, sprites, bgm, MusicTracks } from './assets';
 import { startingLoop, secondLoop, LoopInstance, DialogueChain } from './loops/index';
 
 const defaultDialogueInfo = {
@@ -12,14 +13,21 @@ type DialogueInfo = {
     previousChoices: DialogueChain[],
 }
 
-class App extends React.Component<{}, {
-        loop: LoopInstance;
-        dialogueInfo: DialogueInfo;
-        loopPool: LoopInstance[];
-        previousLoops: LoopInstance[];
-        flags: string[];
-        gameOver: boolean;
-    }>{
+type AppState = {
+    loop: LoopInstance;
+    dialogueInfo: DialogueInfo;
+    loopPool: LoopInstance[];
+    previousLoops: LoopInstance[];
+    flags: string[];
+    gameOver: boolean;
+    settings: {
+        sfx: boolean;
+        music: boolean;
+        typing: boolean;
+    };
+};
+
+class App extends React.Component<{}, AppState>{
 
     constructor(props:any) {
         super(props);
@@ -30,6 +38,11 @@ class App extends React.Component<{}, {
             previousLoops:[],
             flags: [],
             gameOver:false,
+            settings:{
+                sfx: true,
+                music: true,
+                typing: true
+            }
         };
         this.completeDialogueChain = this.completeDialogueChain.bind(this);
         this.selectDialogueChain = this.selectDialogueChain.bind(this);
@@ -93,43 +106,70 @@ class App extends React.Component<{}, {
         }
     }
     render() {
-        const { dialogueInfo, loop, loopPool, previousLoops, flags, gameOver } = this.state;
+        const { dialogueInfo, loop, loopPool, previousLoops, flags, gameOver, settings } = this.state;
         if(gameOver){
             return <div>Game over!</div>
         }
         if(dialogueInfo.choice != null){
             if(dialogueInfo.previousChoices.includes(dialogueInfo.choice)){
-                return <UI animation={dialogueInfo.choice.animation}>
-                    <Dialogue
-                            chain={dialogueInfo.choice.second(flags)}
+                return (
+                    <UI
+                        animation={dialogueInfo.choice.animation}
+                        bgmTrack={settings.music ? loop.music : undefined}
+                    >
+                        <Dialogue
+                            enableSFX={settings.sfx}
+                            chain={dialogueInfo.choice.second(
+                                flags,
+                                previousLoops
+                            )}
                             onChainComplete={this.completeDialogueChain}
                         />
-                </UI>;
+                    </UI>
+                );
             }else{
                 return (
-                    <UI animation={dialogueInfo.choice.animation}>
+                    <UI
+                        animation={dialogueInfo.choice.animation}
+                        bgmTrack={settings.music ? loop.music : undefined}
+                    >
                         <Dialogue
-                            chain={dialogueInfo.choice.first(flags)}
+                            enableSFX={settings.sfx}
+                            chain={dialogueInfo.choice.first(
+                                flags,
+                                previousLoops
+                            )}
                             onChainComplete={this.completeDialogueChain}
                         />
                     </UI>
                 );
             }
         }else{
-            return <UI animation={loop.animation}>
-                <Options onSelect={this.selectDialogueChain}>
-                    {this.state.loop.options.map(a => a.text)}
-                </Options>
-            </UI>
+            return (
+                <UI
+                    animation={loop.animation}
+                    bgmTrack={settings.music ? loop.music : undefined}
+                >
+                    <Options onSelect={this.selectDialogueChain}>
+                        {this.state.loop.options.map((a) => a.text)}
+                    </Options>
+                </UI>
+            );
         }
     }
 }
 
-const UI: React.FC<React.PropsWithChildren<{animation:string}>> = ({children, animation}) => 
+const UI: React.FC<
+    React.PropsWithChildren<{ animation: Sprites; bgmTrack?: MusicTracks }>
+> = ({ children, animation, bgmTrack }) => (
     <div className="app">
-        <div className="boss">animation: {animation}</div>
+        <div className="boss">
+            <img src={sprites[animation]} />
+        </div>
         <div className="dialogue">{children}</div>
-    </div>;
+        {bgmTrack != null ? <BgmPlayer track={bgmTrack}></BgmPlayer> : null}
+    </div>
+);
 
 const Options: React.FC<React.PropsWithChildren<{onSelect: (child: number) => void}>> = ({ children, onSelect }) => (
     <ul>
@@ -139,8 +179,11 @@ const Options: React.FC<React.PropsWithChildren<{onSelect: (child: number) => vo
     </ul>
 );
 
-class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () => void},{index:number, typing:boolean}>{
-    constructor(props: {chain: string[], onChainComplete: () => void}) {
+class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () => void, enableSFX: boolean},{index:number, typing:boolean}>{
+
+    audioRef : React.RefObject<HTMLAudioElement>;
+
+    constructor(props: any) {
         super(props);
         this.state = {
             index:0,
@@ -148,6 +191,7 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         };
         this.advanceDialogue = this.advanceDialogue.bind(this);
         this.finishTyping = this.finishTyping.bind(this);
+        this.audioRef = React.createRef();
     }
 
     finishTyping(){
@@ -163,6 +207,7 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         }else{
             this.setState({
                 index:nextIndex,
+                typing:true,
             });
         }
     }
@@ -172,15 +217,31 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         if(typing){
             return <div className="DialogBox" onClick={this.finishTyping}>
                 <WindupChildren onFinished={this.finishTyping}>
-                    <OnChar fn={(char) => console.log("char " + char)}>
+                    <OnChar fn={debounce(() => {
+                        if(this.props.enableSFX){
+                            const ref = this.audioRef.current!;
+                            ref.currentTime = 0;
+                            ref.play();
+                        }
+                        
+                    })}>
                         {this.props.chain[index]}
                     </OnChar>
                 </WindupChildren>
+                <audio ref={this.audioRef} autoPlay={false} loop={false} preload="audio" controls={false} src="/voice_sans.mp3"></audio>
             </div>;
         }else{
             return (
                 <div className="DialogBox" onClick={this.advanceDialogue}>
                     {this.props.chain[index]}
+                    <audio
+                        ref={this.audioRef}
+                        autoPlay={false}
+                        loop={false}
+                        preload="audio"
+                        controls={false}
+                        src="/voice_sans.mp3"
+                    ></audio>
                 </div>
             );
         }
@@ -188,6 +249,22 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         
     }
 
+}
+
+export function debounce(func:()=>void, timeout = 800) {
+    let timer: NodeJS.Timeout | null = null;
+    if(timer == null){
+        
+        return () => {
+            func();
+            timer = setTimeout(() => {
+                clearTimeout(timer!);
+            }, timeout);
+        };
+    }else{
+        return ()=>{};
+    }
+    
 }
 
 
