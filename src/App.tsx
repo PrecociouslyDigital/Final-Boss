@@ -184,7 +184,7 @@ const Options: React.FC<React.PropsWithChildren<{onSelect: (child: number) => vo
 
 class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () => void, enableSFX: boolean},{index:number, typing:boolean}>{
 
-    audioRef : React.RefObject<HTMLAudioElement>;
+    audio: HTMLAudioElement;
 
     constructor(props: any) {
         super(props);
@@ -194,7 +194,7 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         };
         this.advanceDialogue = this.advanceDialogue.bind(this);
         this.finishTyping = this.finishTyping.bind(this);
-        this.audioRef = React.createRef();
+        this.audio = new Audio('/voice_sans.mp3');
     }
 
     finishTyping(){
@@ -222,29 +222,19 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
                 <WindupChildren onFinished={this.finishTyping}>
                     <OnChar fn={debounce(() => {
                         if(this.props.enableSFX){
-                            const ref = this.audioRef.current!;
-                            ref.currentTime = 0;
-                            ref.play();
+                            this.audio.currentTime = 0;
+                            this.audio.play();
                         }
                         
                     })}>
                         {this.props.chain[index]}
                     </OnChar>
                 </WindupChildren>
-                <audio ref={this.audioRef} autoPlay={false} loop={false} preload="audio" controls={false} src="/voice_sans.mp3"></audio>
             </div>;
         }else{
             return (
                 <div className="DialogBox" onClick={this.advanceDialogue}>
                     {this.props.chain[index]}
-                    <audio
-                        ref={this.audioRef}
-                        autoPlay={false}
-                        loop={false}
-                        preload="audio"
-                        controls={false}
-                        src="/voice_sans.mp3"
-                    ></audio>
                 </div>
             );
         }
