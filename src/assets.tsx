@@ -64,6 +64,9 @@ export class BgmPlayer extends React.Component<
 
 const audioPlayer = new Audio();
 export const playSFX = async (reqSFX: SfxTracks) => {
+    if(!globalEnableSFX){
+        return;
+    }
     if (audioPlayer.currentSrc.endsWith(sfx[reqSFX]) && !audioPlayer.paused){
         return;
     }
@@ -127,10 +130,18 @@ for (const spriteKey in sprites) {
 }
 console.log(loadState);
 
+let globalEnableSFX = true;
+
 export class Loader extends React.Component<
-    React.PropsWithChildren> {
+    React.PropsWithChildren<{changeSettings: (settings: {
+        sfx?:boolean,
+        music?: boolean,
+    }) => void}>, {clicked: boolean}> {
     constructor(props: any){
         super(props);
+        this.state={
+            clicked:false
+        };
     }
 
     componentDidMount(){
@@ -184,10 +195,49 @@ export class Loader extends React.Component<
         return true;
     }
     render() {
+        // Hackily add settings controls here so they're visible before game start
         return (
             <div>
-                {this.isAllLoaded() ? this.props.children : (
-                    <div className="loadingLightbox">Loading...</div>
+                <div className="settings">
+                    <input
+                        type="checkbox"
+                        id="music"
+                        defaultChecked
+                        onChange={(e) => {
+                            this.props.changeSettings({
+                                music: e.currentTarget.checked,
+                            });
+                        }}
+                    />
+                    <label htmlFor="music">Music</label> <br />
+                    <input
+                        type="checkbox"
+                        id="sfx"
+                        defaultChecked
+                        onChange={(e) => {
+                            globalEnableSFX = e.currentTarget.checked;
+                            this.props.changeSettings({
+                                sfx: e.currentTarget.checked,
+                            });
+                        }}
+                    />
+                    <label htmlFor="sfx">Animations and SFX</label> <br />
+                </div>
+                {this.isAllLoaded() && this.state.clicked ? (
+                    this.props.children
+                ) : (
+                    <div
+                        className="loadingLightbox"
+                        onClick={() =>
+                            this.setState({
+                                clicked: true,
+                            })
+                        }
+                    >
+                        {this.isAllLoaded()
+                            ? "Click anywhere to start!"
+                            : "Loading..."}
+                    </div>
                 )}
             </div>
         );

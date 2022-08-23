@@ -23,7 +23,6 @@ type AppState = {
     settings: {
         sfx: boolean;
         music: boolean;
-        typing: boolean;
     };
 };
 
@@ -41,7 +40,6 @@ class App extends React.Component<{}, AppState>{
             settings:{
                 sfx: true,
                 music: true,
-                typing: true
             }
         };
         this.completeDialogueChain = this.completeDialogueChain.bind(this);
@@ -116,12 +114,21 @@ class App extends React.Component<{}, AppState>{
                     <UI
                         animation={dialogueInfo.choice.animation}
                         bgmTrack={settings.music ? loop.music : undefined}
+                        changeSettings={(newSettings) =>
+                            this.setState({
+                                settings: {
+                                    ...settings,
+                                    ...newSettings,
+                                },
+                            })
+                        }
                     >
                         <Dialogue
                             enableSFX={settings.sfx}
                             chain={dialogueInfo.choice.second(
                                 flags,
-                                previousLoops
+                                previousLoops,
+
                             )}
                             onChainComplete={this.completeDialogueChain}
                         />
@@ -132,6 +139,14 @@ class App extends React.Component<{}, AppState>{
                     <UI
                         animation={dialogueInfo.choice.animation}
                         bgmTrack={settings.music ? loop.music : undefined}
+                        changeSettings={(newSettings) =>
+                            this.setState({
+                                settings: {
+                                    ...settings,
+                                    ...newSettings,
+                                },
+                            })
+                        }
                     >
                         <Dialogue
                             enableSFX={settings.sfx}
@@ -149,6 +164,12 @@ class App extends React.Component<{}, AppState>{
                 <UI
                     animation={loop.animation}
                     bgmTrack={settings.music ? loop.music : undefined}
+                    changeSettings={(newSettings) => this.setState({
+                        settings:{
+                            ...settings,
+                            ...newSettings,
+                        }
+                    })}
                 >
                     <Options onSelect={this.selectDialogueChain}>
                         {this.state.loop.options.map((a) => a.text)}
@@ -160,10 +181,13 @@ class App extends React.Component<{}, AppState>{
 }
 
 const UI: React.FC<
-    React.PropsWithChildren<{ animation: Sprites; bgmTrack?: MusicTracks }>
-> = ({ children, animation, bgmTrack }) => (
+    React.PropsWithChildren<{ animation: Sprites; bgmTrack?: MusicTracks, changeSettings: (settings: {
+        sfx?:boolean,
+        music?: boolean,
+    }) => void }>
+> = ({ children, animation, bgmTrack, changeSettings }) => (
     <div className="app">
-        <Loader>
+        <Loader changeSettings={changeSettings}>
             <div className="boss">
                 <img src={sprites[animation]} />
             </div>
@@ -190,7 +214,7 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         super(props);
         this.state = {
             index:0,
-            typing:true,
+            typing:props.enableSFX,
         };
         this.advanceDialogue = this.advanceDialogue.bind(this);
         this.finishTyping = this.finishTyping.bind(this);
@@ -210,7 +234,7 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         }else{
             this.setState({
                 index:nextIndex,
-                typing:true,
+                typing:this.props.enableSFX,
             });
         }
     }
