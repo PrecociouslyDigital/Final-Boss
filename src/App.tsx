@@ -1,4 +1,5 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
+import { OnChar, WindupChildren } from 'windups';
 import './App.css';
 import { startingLoop, secondLoop, LoopInstance, DialogueChain } from './loops/index';
 
@@ -125,9 +126,9 @@ class App extends React.Component<{}, {
 }
 
 const UI: React.FC<React.PropsWithChildren<{animation:string}>> = ({children, animation}) => 
-    <div className="App">
-        <div className="Boss">animation: {animation}</div>
-        <div className="Dialogue">{children}</div>
+    <div className="app">
+        <div className="boss">animation: {animation}</div>
+        <div className="dialogue">{children}</div>
     </div>;
 
 const Options: React.FC<React.PropsWithChildren<{onSelect: (child: number) => void}>> = ({ children, onSelect }) => (
@@ -138,13 +139,21 @@ const Options: React.FC<React.PropsWithChildren<{onSelect: (child: number) => vo
     </ul>
 );
 
-class Dialogue extends React.Component<{chain: string[], onChainComplete: () => void},{index:number}>{
+class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () => void},{index:number, typing:boolean}>{
     constructor(props: {chain: string[], onChainComplete: () => void}) {
         super(props);
         this.state = {
-            index:0
+            index:0,
+            typing:true,
         };
         this.advanceDialogue = this.advanceDialogue.bind(this);
+        this.finishTyping = this.finishTyping.bind(this);
+    }
+
+    finishTyping(){
+        this.setState({
+            typing:false,
+        })
     }
 
     advanceDialogue(){
@@ -159,9 +168,24 @@ class Dialogue extends React.Component<{chain: string[], onChainComplete: () => 
     }
 
     render(): React.ReactNode {
-        return <div className="DialogBox"
-            onClick={this.advanceDialogue}
-        >{this.props.chain[this.state.index]}</div>
+        const {index, typing } = this.state;
+        if(typing){
+            return <div className="DialogBox" onClick={this.finishTyping}>
+                <WindupChildren onFinished={this.finishTyping}>
+                    <OnChar fn={(char) => console.log("char " + char)}>
+                        {this.props.chain[index]}
+                    </OnChar>
+                </WindupChildren>
+            </div>;
+        }else{
+            return (
+                <div className="DialogBox" onClick={this.advanceDialogue}>
+                    {this.props.chain[index]}
+                </div>
+            );
+        }
+
+        
     }
 
 }

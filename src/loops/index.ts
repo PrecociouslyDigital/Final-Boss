@@ -1,3 +1,5 @@
+import { ReactNode } from "react";
+
 export type LoopInstance = {
     id: string,
     animation: string;
@@ -6,8 +8,8 @@ export type LoopInstance = {
 };
 export type DialogueChain = {
     text: string,
-    second: (flags: string[]) => string[],
-    first: (flags: string[]) => string[],
+    second: (flags: string[]) => ReactNode[],
+    first: (flags: string[]) => ReactNode[],
     flag?: string;
     animation: string;
 };
