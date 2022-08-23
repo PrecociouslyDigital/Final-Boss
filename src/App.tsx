@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 import { OnChar, WindupChildren } from 'windups';
 import './App.css';
-import { BgmPlayer, sfx, SfxTracks, Sprites, sprites, bgm, MusicTracks } from './assets';
+import { BgmPlayer, sfx, SfxTracks, Sprites, sprites, bgm, MusicTracks, Loader } from './assets';
 import { startingLoop, secondLoop, LoopInstance, DialogueChain } from './loops/index';
 
 const defaultDialogueInfo = {
@@ -163,11 +163,13 @@ const UI: React.FC<
     React.PropsWithChildren<{ animation: Sprites; bgmTrack?: MusicTracks }>
 > = ({ children, animation, bgmTrack }) => (
     <div className="app">
-        <div className="boss">
-            <img src={sprites[animation]} />
-        </div>
-        <div className="dialogue">{children}</div>
-        {bgmTrack != null ? <BgmPlayer track={bgmTrack}></BgmPlayer> : null}
+        <Loader>
+            <div className="boss">
+                <img src={sprites[animation]} />
+            </div>
+            <div className="dialogue">{children}</div>
+            {bgmTrack != null ? <BgmPlayer track={bgmTrack}></BgmPlayer> : null}
+        </Loader>
     </div>
 );
 
@@ -178,6 +180,7 @@ const Options: React.FC<React.PropsWithChildren<{onSelect: (child: number) => vo
         ) : <li></li>}
     </ul>
 );
+
 
 class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () => void, enableSFX: boolean},{index:number, typing:boolean}>{
 
