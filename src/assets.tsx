@@ -197,7 +197,7 @@ export class Loader extends React.Component<
     render() {
         // Hackily add settings controls here so they're visible before game start
         return (
-            <div>
+            <>
                 <div className="settings">
                     <input
                         type="checkbox"
@@ -239,7 +239,7 @@ export class Loader extends React.Component<
                             : "Loading..."}
                     </div>
                 )}
-            </div>
+            </>
         );
     }
 
