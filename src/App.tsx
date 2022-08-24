@@ -61,8 +61,7 @@ class App extends React.Component<{}, AppState>{
 
         if (index === 0) {
             // If we have more than once choice, We need at least one other choice
-            if(loop.options.length > 1 && (dialogueInfo.previousChoices.length === 0 || 
-                (dialogueInfo.previousChoices.length === 1 && dialogueInfo.previousChoices[0] === loop.options[0]))){
+            if(loop.options.length > 1 && !loop.options.slice(1).some(c => dialogueInfo.previousChoices.includes(c))){
                     this.setState({
                         ...this.state,
                         dialogueInfo: {
@@ -73,6 +72,7 @@ class App extends React.Component<{}, AppState>{
                             previousChoices: [...dialogueInfo.previousChoices, loop.options[0]],
                         }
                     });
+                    return;
             }
             let newLoopPool = [...loopPool, ...loop.enables];
             if(newLoopPool.length === 0){
