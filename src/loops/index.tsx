@@ -35,7 +35,7 @@ const attackLines: DialogueChain = {
 export const thirdLoop: LoopInstance = {
     id: "third",
     animation: "idle",
-    music:"third",
+    music:"quiet",
     options: [
         attackLines,
         {
@@ -88,7 +88,7 @@ export const thirdLoop: LoopInstance = {
 const fillerLoop: LoopInstance = {
     id: "filler",
     animation: "filler",
-    music: "second",
+    music: "piano",
     options: [attackLines, {
         text: "Filler",
         second: () => ["You really clicked on the filler option twice huh"],
@@ -101,7 +101,7 @@ const fillerLoop: LoopInstance = {
 export const secondLoop: LoopInstance = {
     id:"second",
     animation: "idle",
-    music: "second",
+    music: "breakdown",
     options: [attackLines, {
         text: "Talk",
         second: () => ["I have nothing more to say"],
@@ -116,7 +116,7 @@ export const secondLoop: LoopInstance = {
 export const startingLoop: LoopInstance = {
     id: "starting",
     animation: "idle",
-    music:"first",
+    music:"fight",
     options: [attackLines],
     // First loop is special; it will always go to the second loop based on initial state in app.tsx
     enables: [],

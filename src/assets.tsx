@@ -1,14 +1,16 @@
 import React, { ReactNode } from 'react';
 
 export const bgm = {
-    "first": "/first.mp3",
-    "second" : "/second.mp3",
-    "third": "/third.mp3"
+    "fight": "/fight.mp3",
+    "breakdown" : "/breakdown.mp3",
+    "piano": "/piano.mp3",
+    "quiet": "/quiet.mp3",
+    "sad": "/sad.mp3",
 }
 
 export const sfx = {
-    "talk" : "/voice_sans.mp3",
-    "hurt": "/oof.mp3",
+    "talk" : "/voicebit.wav",
+    "hurt": "/hit.wav",
 
 }                                       
 

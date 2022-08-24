@@ -218,7 +218,7 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         };
         this.advanceDialogue = this.advanceDialogue.bind(this);
         this.finishTyping = this.finishTyping.bind(this);
-        this.audio = new Audio('/voice_sans.mp3');
+        this.audio = new Audio('/voicebit.wav');
     }
 
     finishTyping(){
