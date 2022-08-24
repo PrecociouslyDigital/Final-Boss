@@ -60,6 +60,20 @@ class App extends React.Component<{}, AppState>{
         const {dialogueInfo, loop, loopPool, previousLoops, flags} = this.state;
 
         if (index === 0) {
+            // If we have more than once choice, We need at least one other choice
+            if(loop.options.length > 1 && (dialogueInfo.previousChoices.length === 0 || 
+                (dialogueInfo.previousChoices.length === 1 && dialogueInfo.previousChoices[0] === loop.options[0]))){
+                    this.setState({
+                        ...this.state,
+                        dialogueInfo: {
+                            ...dialogueInfo,
+                            // set the new choice
+                            choice: loop.options[0],
+                            //hack to force the second choice to appear
+                            previousChoices: [...dialogueInfo.previousChoices, loop.options[0]],
+                        }
+                    });
+            }
             let newLoopPool = [...loopPool, ...loop.enables];
             if(newLoopPool.length === 0){
                 //We're out of loops, this should always be game over
