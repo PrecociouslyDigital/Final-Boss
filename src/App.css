@@ -1,3 +1,7 @@
+body{
+    overflow:hidden;
+    background-color: #eee;
+}
 .app{
     height:var(--winHeight);
     width:var(--winWidth);
@@ -7,7 +11,7 @@
     justify-content: center;
 }
 .boss{
-    height:40%;
+    height:60%;
     width:95%;
     text-align: center;
     line-height: 100%;
@@ -15,24 +19,38 @@
 .boss img{
     max-width: 100%;
     max-height:100%;
+    height:100%;
+    width:auto;
 }
 .dialogue{
-    border: 8px solid black;
-    top:40%;
-    height:55%;
+    font-size:32px;
+    border: 8px solid #111;
+    top:60%;
+    height:35%;
     width:95%;
+    line-height: 2em;
+    margin-left: 32px;
+    margin-right:32px;
+    color: #eee;
+    background-color: rgb(40,40,40);
+}
+.DialogBox{
+    padding:32px;
 }
 
 .dialogue ul{
+    margin:0;
     width: 95%;
     height: 100%;
     display:flex;
     flex-direction: column;
     flex-wrap: wrap;
-    justify-content: space-evenly;
+    justify-content: flex-start;
     align-items: flex-start;                                         
 }
-.choices li {
+.dialogue ul li {
+    padding-top: 1em;
+    padding-bottom: 1em;
 }
 
 .loadingLightbox{
