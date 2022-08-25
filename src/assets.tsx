@@ -6,6 +6,11 @@ export const bgm = {
     "piano": "/piano.mp3",
     "quiet": "/quiet.mp3",
     "sad": "/sad.mp3",
+    "ambient": "/ambient1.mp3",
+    "flute": "/flute.mp3",
+    "mando": "/mando.mp3",
+    "plucky": "/plucky.mp3",
+    "strings": "strings.mp3",
 }
 
 export const sfx = {
@@ -15,13 +20,13 @@ export const sfx = {
 }                                       
 
 export const sprites = {
-    "idle": "/sans_undertale.jpg",
-    "attack": "/papyrus.webp",
-    "talk": "/weiss.webp",
-    "filler2": "/filler copy.png",
-    "filler": "/filler.png",
-    "meow": "/weiss copy.webp"
-}
+    idle: "/longform_kaiesse_1.png",
+    attack: "/papyrus.webp",
+    talk: "/weiss.webp",
+    filler2: "/filler copy.png",
+    filler: "/filler.png",
+    meow: "/weiss copy.webp",
+};
 
 export class BgmPlayer extends React.Component<
     { track: MusicTracks },
