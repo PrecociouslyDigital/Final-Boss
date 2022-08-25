@@ -1,31 +1,30 @@
 import React, { ReactNode } from 'react';
 
 export const bgm = {
-    "fight": "/fight.mp3",
-    "breakdown" : "/breakdown.mp3",
-    "piano": "/piano.mp3",
-    "quiet": "/quiet.mp3",
-    "sad": "/sad.mp3",
-    "ambient": "/ambient1.mp3",
-    "flute": "/flute.mp3",
-    "mando": "/mando.mp3",
-    "plucky": "/plucky.mp3",
-    "strings": "strings.mp3",
-}
+    fight: "/bgm/fight.mp3",
+    breakdown: "/bgm/breakdown.mp3",
+    piano: "/bgm/piano.mp3",
+    quiet: "/bgm/quiet.mp3",
+    sad: "/bgm/sad.mp3",
+    ambient: "/bgm/ambient1.mp3",
+    flute: "/bgm/flute.mp3",
+    mando: "/bgm/mando.mp3",
+    plucky: "/bgm/plucky.mp3",
+    strings: "/bgm/strings.mp3",
+};
 
 export const sfx = {
-    "talk" : "/voicebit.wav",
-    "hurt": "/hit.wav",
+    "talk" : "/sfx/voicebit.wav",
+    "hurt": "/sfx/hit.wav",
 
 }                                       
 
 export const sprites = {
-    idle: "/longform_kaiesse_1.png",
-    attack: "/papyrus.webp",
-    talk: "/weiss.webp",
-    filler2: "/filler copy.png",
-    filler: "/filler.png",
-    meow: "/weiss copy.webp",
+    idle: "sprites/1_neutralfrown.png",
+    smile: "sprites/2_neutralsmile.png",
+    laugh: "sprites/3_laugh.png",
+    sad: "sprites/4_sad.png",
+    suprise: "sprites/5_suprise.png",
 };
 
 export class BgmPlayer extends React.Component<
