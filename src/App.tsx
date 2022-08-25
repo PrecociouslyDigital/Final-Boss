@@ -223,6 +223,7 @@ const Options: React.FC<React.PropsWithChildren<{onSelect: (child: number) => vo
 class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () => void, enableSFX: boolean},{index:number, typing:boolean}>{
 
     audio: HTMLAudioElement;
+    beingVoiced: boolean;
 
     constructor(props: any) {
         super(props);
@@ -233,12 +234,15 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         this.advanceDialogue = this.advanceDialogue.bind(this);
         this.finishTyping = this.finishTyping.bind(this);
         this.audio = new Audio('/voicebit.wav');
+        this.beingVoiced = false;
+
     }
 
     finishTyping(){
         this.setState({
             typing:false,
-        })
+        });
+        this.beingVoiced = false;
     }
 
     advanceDialogue(){
@@ -256,19 +260,25 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
     render(): React.ReactNode {
         const {index, typing } = this.state;
         if(typing){
-            return <div className="DialogBox" onClick={this.finishTyping}>
-                <WindupChildren onFinished={this.finishTyping}>
-                    <OnChar fn={debounce(() => {
-                        if(this.props.enableSFX){
-                            this.audio.currentTime = 0;
-                            this.audio.play();
-                        }
-                        
-                    })}>
-                        {this.props.chain[index]}
-                    </OnChar>
-                </WindupChildren>
-            </div>;
+            return (
+                <div className="DialogBox" onClick={this.finishTyping}>
+                    <WindupChildren onFinished={this.finishTyping}>
+                        <OnChar
+                            fn={debounce((char) => {
+                                if(char === '"'){
+                                    this.beingVoiced = !this.beingVoiced;
+                                }
+                                if (this.props.enableSFX && this.beingVoiced) {
+                                    this.audio.currentTime = 0;
+                                    this.audio.play();
+                                }
+                            })}
+                        >
+                            {this.props.chain[index]}
+                        </OnChar>
+                    </WindupChildren>
+                </div>
+            );
         }else{
             return (
                 <div className="DialogBox" onClick={this.advanceDialogue}>
@@ -282,12 +292,12 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
 
 }
 
-export function debounce(func:()=>void, timeout = 800) {
+export function debounce(func:(c:string)=>void, timeout = 800) {
     let timer: NodeJS.Timeout | null = null;
     if(timer == null){
         
-        return () => {
-            func();
+        return (c : string) => {
+            func(c);
             timer = setTimeout(() => {
                 clearTimeout(timer!);
             }, timeout);

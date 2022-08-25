@@ -1,6 +1,5 @@
 import { ReactNode } from "react";
 import { Effect, Pause } from "windups";
-import { debounce } from "../App";
 import { MusicTracks, playSFX, Sprites } from '../assets';
 
 export type LoopInstance = {
@@ -99,17 +98,33 @@ const fillerLoop: LoopInstance = {
 };
 
 export const secondLoop: LoopInstance = {
-    id:"second",
+    id: "second",
     animation: "idle",
     music: "breakdown",
-    options: [attackLines, {
-        text: "Talk",
-        second: () => ["I have nothing more to say"],
-        first: () => ["You really think talking will help now?", "Have at thee!"],
-        flag:"talk",
-        animation: "talk",
-    }],
-    enables: [thirdLoop, fillerLoop, fillerLoop, fillerLoop, fillerLoop, fillerLoop],
+    options: [
+        attackLines,
+        {
+            text: "Talk",
+            second: () => [
+                `"I have nothing more to say"`,
+            ],
+            first: () => [
+                "the following lines are voiced",
+                    `"You really think talking will help now?"`,
+                    `"Have at thee!"`,
+            ],
+            flag: "talk",
+            animation: "talk",
+        },
+    ],
+    enables: [
+        thirdLoop,
+        fillerLoop,
+        fillerLoop,
+        fillerLoop,
+        fillerLoop,
+        fillerLoop,
+    ],
 };
 
 
