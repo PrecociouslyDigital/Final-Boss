@@ -111,7 +111,7 @@ export const secondLoop: LoopInstance = {
             first: () => [
                 "the following lines are voiced",
                     `"You really think talking will help now?"`,
-                    `"Have at thee!"`,
+                    `"Have at thee!" he says, with an overly long period in between before saying again: "have at thee!"`,
             ],
             flag: "talk",
             animation: "talk",
