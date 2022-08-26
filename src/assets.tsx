@@ -1,4 +1,4 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
 
 export const bgm = {
     fight: "/bgm/fight.mp3",
@@ -20,11 +20,12 @@ export const sfx = {
 }                                       
 
 export const sprites = {
-    idle: "sprites/1_neutralfrown.png",
-    smile: "sprites/2_neutralsmile.png",
-    laugh: "sprites/3_laugh.png",
-    sad: "sprites/4_sad.png",
-    suprise: "sprites/5_suprise.png",
+    idle: "/sprites/1_neutralfrown.png",
+    smile: "/sprites/2_neutralsmile.png",
+    laugh: "/sprites/3_laugh.png",
+    sad: "/sprites/4_sad.png",
+    surprise: "/sprites/5_surprise.png",
+    dragon: "/sprites/dragon.png",
 };
 
 export class BgmPlayer extends React.Component<

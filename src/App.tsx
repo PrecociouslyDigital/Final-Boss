@@ -1,11 +1,25 @@
 import React, { ReactNode } from 'react';
-import { OnChar, WindupChildren } from 'windups';
+import { OnChar, WindupChildren, Linebreaker, Pause } from 'windups';
 import './App.css';
 import { BgmPlayer, sfx, SfxTracks, Sprites, sprites, bgm, MusicTracks, Loader } from './assets';
 import { startingLoop, secondLoop, LoopInstance, DialogueChain } from './loops/index';
 
-const defaultDialogueInfo = {
-    previousChoices:[],
+const defaultDialogueInfo: DialogueInfo = {
+    previousChoices: [],
+    choice: {
+        text: "never",
+        animation:"idle",
+        second: () => [],
+        first: () => [
+        <>
+            The last of the drakes between you and the boss fall to your bow. On the dais stands a
+            solitary figure, awaiting your arrival.
+        </>,
+        <>
+            "Excellent! At last! Take your stand, champion of the gods! This all
+            ends now."
+        </>,
+    ],}
 };
 
 type DialogueInfo = {
@@ -120,8 +134,40 @@ class App extends React.Component<{}, AppState>{
     render() {
         const { dialogueInfo, loop, loopPool, previousLoops, flags, gameOver, settings } = this.state;
         if(gameOver){
-            return <div>Game over!</div>
+            return (
+                <UI
+                    animation={"idle"}
+                    bgmTrack={settings.music ? "ambient" : undefined}
+                    changeSettings={(newSettings) =>
+                        this.setState({
+                            settings: {
+                                ...settings,
+                                ...newSettings,
+                            },
+                        })
+                    }
+                >
+                    <div className="loadingLightbox">
+                        <WindupChildren>
+                            The world seems frozen around you. There is no more
+                            road to travel. Nothing more to do. Just you, and
+                            Kaiisse, and the setting sun. <br />
+                            <Pause ms={3000} />
+                            "There is nothing more for us in this place. Shall
+                            we part ways then? Each of us to explore the far
+                            reaches of this world."
+                            <br />
+                            <Pause ms={3000} />
+                            Of course I shall miss you. But we will meet again,
+                            and next time we will have more stories to tell. If
+                            you ever need me, you know how to find me. Go on,
+                            then! See you soon, <Pause ms={700} /> my friend.
+                        </WindupChildren>
+                    </div>
+                </UI>
+            );
         }
+        
         if(dialogueInfo.choice != null){
             if(dialogueInfo.previousChoices.includes(dialogueInfo.choice)){
                 return (
@@ -233,7 +279,7 @@ class Dialogue extends React.Component<{chain: ReactNode[], onChainComplete: () 
         };
         this.advanceDialogue = this.advanceDialogue.bind(this);
         this.finishTyping = this.finishTyping.bind(this);
-        this.audio = new Audio('/voicebit.wav');
+        this.audio = new Audio('/sfx/voicebit.wav');
         this.beingVoiced = false;
 
     }
